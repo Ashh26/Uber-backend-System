@@ -12,12 +12,12 @@ public class RiderFareDefaultFareCalculationStrategy implements RideFareCalculat
 
 
     private final DistanceService distanceService;
-    private static final double SURGE_FACTOR = 2;
+
 
     @Override
     public double calculateFare(RideRequest rideRequest) {
         double distance = distanceService.calculateDistance(rideRequest.getPickupLocation(),
                 rideRequest.getDropOffLocation());
-        return distance*RIDE_FARE_MULTIPLIER*SURGE_FACTOR;
+        return distance*RIDE_FARE_MULTIPLIER;
     }
 }

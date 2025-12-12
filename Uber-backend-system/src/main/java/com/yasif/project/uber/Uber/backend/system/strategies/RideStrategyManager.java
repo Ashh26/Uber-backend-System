@@ -20,7 +20,7 @@ public class RideStrategyManager {
 
 
     public DriverMatchingStrategy driverMatchingStrategy(double riderRating){
-        if(riderRating>=4.5){
+        if(riderRating>=4.8){
             return driverMatchingHighestRatedDriverStrategy;
         }else{
             return driverMatchingNearestDriverStrategy;
@@ -30,7 +30,7 @@ public class RideStrategyManager {
 
     public RideFareCalculationStrategy rideFareCalculationStrategy(){
         LocalTime surgeStartTime = LocalTime.of(18,0);
-        LocalTime surgeEndTime = LocalTime.of(22,0);
+        LocalTime surgeEndTime = LocalTime.of(21,0);
         LocalTime currentTime = LocalTime.now();
 
         boolean isSurgeTime = currentTime.isAfter(surgeStartTime) && currentTime.isBefore(surgeEndTime);

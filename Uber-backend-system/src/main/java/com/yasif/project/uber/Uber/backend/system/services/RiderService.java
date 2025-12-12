@@ -6,8 +6,8 @@ import com.yasif.project.uber.Uber.backend.system.dto.RideRequestDto;
 import com.yasif.project.uber.Uber.backend.system.dto.RiderDto;
 import com.yasif.project.uber.Uber.backend.system.entities.Rider;
 import com.yasif.project.uber.Uber.backend.system.entities.User;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 
 public interface RiderService {
 
@@ -15,12 +15,11 @@ public interface RiderService {
 
     RideDto cancelRide(Long rideId);
 
-
     DriverDto rateDriver(Long rideId,Integer rating);
 
-    DriverDto getMyProfile();
+    RiderDto getMyProfile();
 
-    List<RiderDto> getAllMyRides();
+    Page<RideDto> getAllMyRides(PageRequest pageRequest);
 
     Rider createNewRider(User user);
 

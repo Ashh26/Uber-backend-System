@@ -21,7 +21,7 @@ public class MapperConfig {
 
         modelMapper.typeMap(Point.class,PointDto.class).setConverter(context ->{
             Point point = context.getSource();
-            Double coordinates[] = {
+            double coordinates[] = {
                     point.getX(),
                     point.getY()
             };

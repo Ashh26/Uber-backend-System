@@ -3,11 +3,17 @@ package com.yasif.project.uber.Uber.backend.system.entities;
 import com.yasif.project.uber.Uber.backend.system.entities.enums.TransactionMethod;
 import com.yasif.project.uber.Uber.backend.system.entities.enums.TransactionType;
 import jakarta.persistence.*;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class WalletTransaction {
 
     @Id
@@ -20,7 +26,7 @@ public class WalletTransaction {
 
     private TransactionMethod transactionMethod;
 
-    @OneToOne
+    @ManyToOne
     private Ride ride;
 
     private String transactionId;

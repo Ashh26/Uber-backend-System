@@ -1,9 +1,9 @@
 package com.yasif.project.uber.Uber.backend.system.services.Impl;
 
-import com.yasif.project.uber.Uber.backend.system.dto.RideRequestDto;
 import com.yasif.project.uber.Uber.backend.system.entities.Driver;
 import com.yasif.project.uber.Uber.backend.system.entities.Ride;
 import com.yasif.project.uber.Uber.backend.system.entities.RideRequest;
+import com.yasif.project.uber.Uber.backend.system.entities.Rider;
 import com.yasif.project.uber.Uber.backend.system.entities.enums.RideRequestStatus;
 import com.yasif.project.uber.Uber.backend.system.entities.enums.RideStatus;
 import com.yasif.project.uber.Uber.backend.system.exceptions.ResourceNotFoundException;
@@ -34,19 +34,16 @@ public class RideServiceImpl implements RideService {
         );
     }
 
-    @Override
-    public void matchWithDrivers(RideRequestDto rideRequestDto) {
-
-    }
 
     @Override
-    public Ride createsNewRide(RideRequest rideRequest, Driver driver) {
+    public Ride createNewRide(RideRequest rideRequest, Driver driver) {
         rideRequest.setRideRequestStatus(RideRequestStatus.CONFIRMED);
 
         Ride ride = modelMapper.map(rideRequest,Ride.class);
         ride.setRideStatus(RideStatus.CONFIRMED);
         ride.setDriver(driver);
         ride.setOtp(generateRandomOTP());
+        ride.setId(null);
 
         rideRequestService.update(rideRequest);
 
@@ -62,13 +59,13 @@ public class RideServiceImpl implements RideService {
     }
 
     @Override
-    public Page<Ride> getAllRidesOfRider(Long riderId, PageRequest pageRequest) {
-        return null;
+    public Page<Ride> getAllRidesOfRider(Rider rider, PageRequest pageRequest) {
+        return rideRepository.findByRider(rider,pageRequest);
     }
 
     @Override
-    public Page<Ride> getAllRidesOfDriver(Long driverId, PageRequest pageRequest) {
-        return null;
+    public Page<Ride> getAllRidesOfDriver(Driver driver, PageRequest pageRequest) {
+        return rideRepository.findByDriver(driver,pageRequest);
     }
 
     private String generateRandomOTP(){

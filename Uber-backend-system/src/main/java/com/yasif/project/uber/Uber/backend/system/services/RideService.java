@@ -1,9 +1,9 @@
 package com.yasif.project.uber.Uber.backend.system.services;
 
-import com.yasif.project.uber.Uber.backend.system.dto.RideRequestDto;
 import com.yasif.project.uber.Uber.backend.system.entities.Driver;
 import com.yasif.project.uber.Uber.backend.system.entities.Ride;
 import com.yasif.project.uber.Uber.backend.system.entities.RideRequest;
+import com.yasif.project.uber.Uber.backend.system.entities.Rider;
 import com.yasif.project.uber.Uber.backend.system.entities.enums.RideStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -12,14 +12,13 @@ public interface RideService {
 
     Ride getRideById(Long rideId);
 
-    void matchWithDrivers(RideRequestDto rideRequestDto);
 
-    Ride createsNewRide(RideRequest rideRequest, Driver driver);
+    Ride createNewRide(RideRequest rideRequest, Driver driver);
 
     Ride updateRideStatus(Ride ride, RideStatus rideStatus);
 
-    Page<Ride> getAllRidesOfRider(Long riderId, PageRequest pageRequest);
+    Page<Ride> getAllRidesOfRider(Rider rider, PageRequest pageRequest);
 
-    Page<Ride> getAllRidesOfDriver(Long driverId,PageRequest pageRequest);
+    Page<Ride> getAllRidesOfDriver(Driver driver,PageRequest pageRequest);
 
 }
