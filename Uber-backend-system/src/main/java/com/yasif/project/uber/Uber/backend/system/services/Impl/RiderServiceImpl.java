@@ -11,6 +11,7 @@ import com.yasif.project.uber.Uber.backend.system.exceptions.ResourceNotFoundExc
 import com.yasif.project.uber.Uber.backend.system.repositories.RideRequestRepository;
 import com.yasif.project.uber.Uber.backend.system.repositories.RiderRepository;
 import com.yasif.project.uber.Uber.backend.system.services.DriverService;
+import com.yasif.project.uber.Uber.backend.system.services.RatingService;
 import com.yasif.project.uber.Uber.backend.system.services.RideService;
 import com.yasif.project.uber.Uber.backend.system.services.RiderService;
 import com.yasif.project.uber.Uber.backend.system.strategies.RideStrategyManager;
@@ -36,6 +37,7 @@ public class RiderServiceImpl implements RiderService {
     private final RiderRepository riderRepository;
     private final DriverService driverService;
     private final RideService rideService;
+    private final RatingService ratingService;
 
 
     @Override
@@ -95,7 +97,25 @@ public class RiderServiceImpl implements RiderService {
 
     @Override
     public DriverDto rateDriver(Long rideId, Integer rating) {
-        return null;
+        // first get the ride and rider
+        Ride ride = rideService.getRideById(rideId);
+
+        Rider rider = getCurrentRider();
+
+        // now match the currentDriver with exact rider
+        if (!rider.equals(ride.getRider())){
+            throw new RuntimeException("Rider is not the owner of this ride");
+        }
+
+        //If the ride is not in the correct stage, the system stops the rating process and
+        // tells the reason — the ride isn’t finished yet, so rating is not allowed now.
+        if(!ride.getRideStatus().equals(RideStatus.ONGOING)){
+            throw new RuntimeException(
+                    "Ride is not ended so we cannot start rating. status:"+ride.getRideStatus());
+        }
+
+
+        return ratingService.rateDriver(ride,rating);
     }
 
     @Override

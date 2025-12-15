@@ -2,17 +2,16 @@ package com.yasif.project.uber.Uber.backend.system.services.Impl;
 
 import com.yasif.project.uber.Uber.backend.system.dto.DriverDto;
 import com.yasif.project.uber.Uber.backend.system.dto.RideDto;
+import com.yasif.project.uber.Uber.backend.system.dto.RiderDto;
 import com.yasif.project.uber.Uber.backend.system.entities.Driver;
 import com.yasif.project.uber.Uber.backend.system.entities.Ride;
 import com.yasif.project.uber.Uber.backend.system.entities.RideRequest;
+import com.yasif.project.uber.Uber.backend.system.entities.Rider;
 import com.yasif.project.uber.Uber.backend.system.entities.enums.RideRequestStatus;
 import com.yasif.project.uber.Uber.backend.system.entities.enums.RideStatus;
 import com.yasif.project.uber.Uber.backend.system.exceptions.ResourceNotFoundException;
 import com.yasif.project.uber.Uber.backend.system.repositories.DriverRepository;
-import com.yasif.project.uber.Uber.backend.system.services.DriverService;
-import com.yasif.project.uber.Uber.backend.system.services.PaymentService;
-import com.yasif.project.uber.Uber.backend.system.services.RideRequestService;
-import com.yasif.project.uber.Uber.backend.system.services.RideService;
+import com.yasif.project.uber.Uber.backend.system.services.*;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -31,6 +30,7 @@ public class DriverServiceImpl implements DriverService {
     private final RideService rideService;
     private final ModelMapper modelMapper;
     private final PaymentService paymentService;
+    private final RatingService ratingService;
 
     @Transactional
     @Override
@@ -147,8 +147,25 @@ public class DriverServiceImpl implements DriverService {
     }
 
     @Override
-    public RideDto rateRider(Long rideId, Integer rating) {
-        return null;
+    public RiderDto rateRider(Long rideId, Integer rating) {
+        // first get the driver and rider
+        Driver driver = getCurrentDriver();
+        Ride ride = rideService.getRideById(rideId);
+
+        // now match the currentDriver with exact rider
+        if (!driver.equals(ride.getDriver())){
+            throw new RuntimeException("Driver is not the owner of this ride");
+        }
+
+        //If the ride is not in the correct stage, the system stops the rating process and
+        // tells the reason — the ride isn’t finished yet, so rating is not allowed now.
+        if(!ride.getRideStatus().equals(RideStatus.ONGOING)){
+            throw new RuntimeException(
+                    "Ride is not ended so we cannot start rating. status:"+ride.getRideStatus());
+        }
+
+
+        return ratingService.rateRider(ride,rating);
     }
 
     @Override
@@ -184,6 +201,11 @@ public class DriverServiceImpl implements DriverService {
         // set the availability and save the driver
 
         driver.setAvailable(available);
+        return driverRepository.save(driver);
+    }
+
+    @Override
+    public Driver createNewDriver(Driver driver) {
         return driverRepository.save(driver);
     }
 }
